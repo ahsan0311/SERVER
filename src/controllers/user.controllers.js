@@ -1,9 +1,9 @@
 import jwt from "jsonwebtoken";
-import User from "../models/user.models.js"
+import FbUser from "../models/user.models.js"
 import { v2 as cloudinary } from "cloudinary";
 import bcrypt from "bcrypt";
 import fs from "fs";
-// import { decode } from "punycode";
+import { decode } from "punycode";
 
 const generateAccessToken = (user) => {
     return jwt.sign({ email: user.email, id: user._id}, process.env.ACCESS_TOKEN, { expiresIn: '6h' });
@@ -44,16 +44,17 @@ const register = async(req,res)=>{
     if(!email) return res.status(404).json({message : "Please enter a email"})        
     if(!password) return res.status(404).json({message : "Please enter a password"})
 
-    const user = await User.findOne({email: email})   
+    const user = await FbUser.findOne({email: email})   
     if(user) return res.status(400).json({message : "Email already exists"})
 
     // const imageUrl = await uploadImgToCloudinary(req.file.path)
-    const userCreate = await User.create({
+    const userCreate = await FbUser.create({
         name,
         email,
         password,
         // profileImage: imageUrl
     })
+
 
     res.status(200).json({
         message : "User created successfully",
@@ -68,27 +69,24 @@ const login = async (req,res)=>{
     if(!email) return res.status(404).json({message : "Please enter a email"})        
     if(!password) return res.status(404).json({message : "Please enter a password"})
 
-    const user = await User.findOne ({email:email})
+    const user = await FbUser.findOne ({email:email})
     if(!user) return res.status(404).json({message : "User not found"})
     
     const isPassword = await bcrypt.compare(password, user.password)
     if(!isPassword) return res.status(404).json({message : "password mismatch"})
 
-    const access = generateAccessToken(user)
-    const refresh = generateRefreshToken(user)
-
-    res.cookie('refresh', refresh, {
-        httpOnly: true,
-        secure: false,  
-        sameSite: "strict", 
-    })
-
-    res.status(200).json({
-        message : "User logged in successfully",
-        access,
-        refresh,
-        data : user
-    })
+        const accessToken = generateAccessToken(user);
+        const refreshToken = generateRefreshToken(user);
+        res.cookie("refreshToken", refreshToken, {
+          http: true,
+          secure: false,
+          maxAge: 7 * 24 * 60 * 60 * 1000,
+        });
+        res.status(200).json({
+          message: "User logged in successfully",
+          data: user,
+          ACCESS_TOKEN: accessToken,
+        });
 }
 
 
@@ -101,7 +99,7 @@ const refreshToken = async (req,res)=>{
     const refresh= req.cookies.refresh || req.body.refresh
     if(!refresh) return res.status(401).json({message : "No refresh token found"})
     const decoded = jwt.verify(refresh,process.env.REFRESH_TOKEN)
-    const user = await User.findOne({email : decoded.email})
+    const user = await FbUser.findOne({email : decoded.email})
     if(!user) return res.status(403).json({message : "Invalid refresh token"})
     const access = generateAccessToken(user)
     res.status(200).json(

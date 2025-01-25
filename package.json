@@ -1,23 +1,15 @@
 {
-  "name": "server",
+  "name": "new-folder-(4)",
   "version": "1.0.0",
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "dev": "nodemon index.js",
+    "dev" : "nodemon index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/ahsan0311/SERVER.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/ahsan0311/SERVER/issues"
-  },
-  "homepage": "https://github.com/ahsan0311/SERVER#readme",
   "description": "",
   "dependencies": {
     "bcrypt": "^5.1.1",
@@ -29,8 +21,5 @@
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.9.5",
     "multer": "^1.4.5-lts.1"
-  },
-  "devDependencies": {
-    "nodemon": "^3.1.9"
   }
 }

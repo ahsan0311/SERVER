@@ -4,7 +4,9 @@ import connectDB from './src/db/index.js'
 import cors from 'cors'
 import cookieParser from 'cookie-parser';
 import userRouter from "./src/routes/user.route.js"
-// import postRouter from "./src/routes/post.route.js"
+import postRouter from "./src/routes/post.route.js"
+import loanRouter from "./src/routes/loan.route.js"
+
 
 
 
@@ -14,11 +16,13 @@ dotenv.config()
 
 const app = express()
 
-app.use(cors({
-  origin: 'https://client-puce-tau-47.vercel.app',  // your frontend's URL
-  credentials: true, 
-  exposedHeaders : ["set-cookie"]
-}))
+app.use(
+  cors({
+    origin: 'https://final-hackthon-client.vercel.app',
+    credentials: true,
+    exposedHeaders: ["set-cookie"],
+  })
+);
 app.use(express.json())
 app.use(cookieParser())
 
@@ -29,7 +33,9 @@ app.get("/", (req, res) => {
 });
 
 app.use("/api/user",userRouter)
-// app.use("/api/userPost",postRouter)
+app.use("/api/userPost",postRouter)
+app.use("/api/loan",loanRouter)
+
 
 
 

@@ -17,14 +17,6 @@ const applyLoan = async (req, res) => {
   }
 };
 
-// const getUserLoans = async (req, res) => {
-//   try {
-//     const { userId } = req.params;
-//     const loans = await Loan.find({ userId });
-//     res.status(200).json({ loans });
-//   } catch (error) {
-//     res.status(500).json({ message: "Error fetching loans", error: error.message });
-//   }
-// };
+
 
 export {applyLoan}

@@ -34,7 +34,7 @@ app.get("/", (req, res) => {
 
 app.use("/api/user",userRouter)
 app.use("/api/userPost",postRouter)
-app.use("/api/loan",loanRouter)
+app.use("/api",loanRouter)
 
 
 

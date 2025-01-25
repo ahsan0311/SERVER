@@ -35,4 +35,4 @@ userSchema.pre("save",async function(next){
     next()
 })
 
-export default mongoose.model("FbUser",userSchema)
+export default mongoose.model("user",userSchema)

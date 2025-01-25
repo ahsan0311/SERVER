@@ -15,10 +15,15 @@ dotenv.config()
 
 
 const app = express()
- 
+
+// {
+//   origin: "http://localhost:5173",
+//   credentials: true,
+//   exposedHeaders: ["set-cookie"],
+// }
 app.use(
   cors({
-    origin: 'https://client-puce-tau-47.vercel.app',
+    origin: 'https://final-hackthon-client.vercel.app',
     credentials: true,
     exposedHeaders: ["set-cookie"],
   })
@@ -33,8 +38,8 @@ app.get("/", (req, res) => {
 });
 
 app.use("/api",userRouter)
-// app.use("/api/userPost",postRouter)
-app.use("/api",loanRouter)
+app.use("/api/userPost",postRouter)
+app.use("/api/loan",loanRouter)
 
 
 

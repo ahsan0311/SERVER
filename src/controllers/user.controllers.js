@@ -4,6 +4,11 @@ import { v2 as cloudinary } from "cloudinary";
 import bcrypt from "bcrypt";
 import fs from "fs";
 import { decode } from "punycode";
+import nodemailer from "nodemailer"
+import dotenv from "dotenv"
+
+dotenv.config()
+
 
 const generateAccessToken = (user) => {
     return jwt.sign({ email: user.email, id: user._id}, process.env.ACCESS_TOKEN, { expiresIn: '6h' });
@@ -17,46 +22,49 @@ const generateRefreshToken = (user)=>{
     })
 }
 
-// const uploadImgToCloudinary = async (filePath) => {
 
-//     cloudinary.config({
-//         cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-//         api_key: process.env.CLOUDINARY_API_KEY,
-//         api_secret: process.env.CLOUDINARY_API_SECRET
-//     })
-//     try {
-//         const uploadResult = await cloudinary.uploader.upload(filePath, {
-//           resource_type: "auto",
-//         });
-//         fs.unlinkSync(filePath);
-//         return uploadResult.secure_url;
-//       } catch (error) {
-//         fs.unlinkSync(filePath);
-//         return null;
-//       }
-// };
 
+
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+      user: 'ahsankhan03143@gmail.com',
+      pass: 'vcqo uuqe ensq zrof'
+  }
+});
 
 
 const register = async(req,res)=>{
-    const {name,email,password,cnic} = req.body;
+    const {name,email,cnic} = req.body;
     if(!name) return res.status(404).json({message : "Please enter a name"})       
     if(!email) return res.status(404).json({message : "Please enter a email"})        
-    if(!password) return res.status(404).json({message : "Please enter a password"})
     if(!cnic) return res.status(404).json({message : "Please enter a cnic"})
 
 
     const user = await FbUser.findOne({email: email})   
     if(user) return res.status(400).json({message : "Email already exists"})
+      const randomPassword = Math.random().toString(36).slice(-8);
 
     // const imageUrl = await uploadImgToCloudinary(req.file.path)
     const userCreate = await FbUser.create({
         name,
         email,
-        password: password || null,
-        cnic
+        cnic,
+        password: randomPassword,
+        status: "Pending",
         // profileImage: imageUrl
     })
+
+    const info = await transporter.sendMail({
+      from: '"Maddison Foo Koch 👻" <ahsankhan03143@gmail.com>', // sender address
+      to: email, // recipient's email
+      subject: "Your Account Password ✔", // Subject line
+      text: `Your password is: ${randomPassword}`, // plain text body
+      html: `<b>Your password is: ${randomPassword}</b>`, // HTML body
+    });
+
+    console.log("Password email sent:", info.messageId);
+    
 
 
     res.status(200).json({

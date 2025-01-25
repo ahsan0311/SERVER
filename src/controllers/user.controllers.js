@@ -5,9 +5,6 @@ import bcrypt from "bcrypt";
 import fs from "fs";
 import { decode } from "punycode";
 import nodemailer from "nodemailer"
-import dotenv from "dotenv"
-
-dotenv.config()
 
 
 const generateAccessToken = (user) => {
@@ -22,14 +19,31 @@ const generateRefreshToken = (user)=>{
     })
 }
 
+// const uploadImgToCloudinary = async (filePath) => {
 
+//     cloudinary.config({
+//         cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+//         api_key: process.env.CLOUDINARY_API_KEY,
+//         api_secret: process.env.CLOUDINARY_API_SECRET
+//     })
+//     try {
+//         const uploadResult = await cloudinary.uploader.upload(filePath, {
+//           resource_type: "auto",
+//         });
+//         fs.unlinkSync(filePath);
+//         return uploadResult.secure_url;
+//       } catch (error) {
+//         fs.unlinkSync(filePath);
+//         return null;
+//       }
+// };
 
 
 const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
-      user: 'ahsankhan03143@gmail.com',
-      pass: 'vcqo uuqe ensq zrof'
+      user: 'hasankhanali0316@gmail.com',
+      pass: 'bmwu nozg dwqc upfz'
   }
 });
 
@@ -56,8 +70,8 @@ const register = async(req,res)=>{
     })
 
     const info = await transporter.sendMail({
-      from: '"Maddison Foo Koch 👻" <ahsankhan03143@gmail.com>', // sender address
-      to: email, // recipient's email
+      from: '"hasan khan" <hasankhanali0316@gmail.com>', // sender address
+      to: email, 
       subject: "Your Account Password ✔", // Subject line
       text: `Your password is: ${randomPassword}`, // plain text body
       html: `<b>Your password is: ${randomPassword}</b>`, // HTML body
@@ -103,16 +117,16 @@ const register = async(req,res)=>{
 
 const login = async (req, res) => {
     try {
-      const { email, password  } = req.body;
+      const { cnic, password  } = req.body;
   
       // Input validation
-      if (!email)
-        return res.status(400).json({ message: "Please enter an email" });
+      if (!cnic)
+        return res.status(400).json({ message: "Please enter an cnic" });
       if (!password)
         return res.status(400).json({ message: "Please enter a password " });
   
       // Find user
-      const user = await FbUser.findOne({ email });
+      const user = await FbUser.findOne({ cnic });
       if (!user) return res.status(404).json({ message: "User not found" });
   
       // Check password
@@ -121,32 +135,35 @@ const login = async (req, res) => {
         return res.status(401).json({ message: "Invalid password" });
   
       // Generate tokens
-      const accessToken = generateAccessToken(user); // Short-lived token
-      const refreshToken = generateRefreshToken(user); // Long-lived token
+      const accessToken = generateAccessToken(user); 
+      const refreshToken = generateRefreshToken(user); 
   
       // Set refresh token cookie with appropriate settings
       res.cookie("refreshToken", refreshToken, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production", // Secure in production
-        sameSite: "strict",
-        maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+        http: true,
+        secure: false,
+        maxAge: 7 * 24 * 60 * 60 * 1000,
       });
   
       // Send response
       res.status(200).json({
         message: "User logged in successfully",
         accessToken,
-        user: {
-          id: user._id,
-          email: user.email,
-          name: user.name,
-        },
+       user: {
+        id: user._id,
+        cnic: user.cnic,
+        email: user.email,
+        name: user.name,
+      },
       });
     } catch (error) {
       console.error("Login error:", error);
       res.status(500).json({ message: "Internal server error" });
     }
   };
+
+
+
 
 
 const logout = async (req,res)=>{

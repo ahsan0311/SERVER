@@ -17,24 +17,24 @@ const generateRefreshToken = (user)=>{
     })
 }
 
-const uploadImgToCloudinary = async (filePath) => {
+// const uploadImgToCloudinary = async (filePath) => {
 
-    cloudinary.config({
-        cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-        api_key: process.env.CLOUDINARY_API_KEY,
-        api_secret: process.env.CLOUDINARY_API_SECRET
-    })
-    try {
-        const uploadResult = await cloudinary.uploader.upload(filePath, {
-          resource_type: "auto",
-        });
-        fs.unlinkSync(filePath);
-        return uploadResult.secure_url;
-      } catch (error) {
-        fs.unlinkSync(filePath);
-        return null;
-      }
-};
+//     cloudinary.config({
+//         cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+//         api_key: process.env.CLOUDINARY_API_KEY,
+//         api_secret: process.env.CLOUDINARY_API_SECRET
+//     })
+//     try {
+//         const uploadResult = await cloudinary.uploader.upload(filePath, {
+//           resource_type: "auto",
+//         });
+//         fs.unlinkSync(filePath);
+//         return uploadResult.secure_url;
+//       } catch (error) {
+//         fs.unlinkSync(filePath);
+//         return null;
+//       }
+// };
 
 
 
@@ -47,12 +47,12 @@ const register = async(req,res)=>{
     const user = await User.findOne({email: email})   
     if(user) return res.status(400).json({message : "Email already exists"})
 
-    const imageUrl = await uploadImgToCloudinary(req.file.path)
+    // const imageUrl = await uploadImgToCloudinary(req.file.path)
     const userCreate = await User.create({
         name,
         email,
         password,
-        profileImage: imageUrl
+        // profileImage: imageUrl
     })
 
     res.status(200).json({

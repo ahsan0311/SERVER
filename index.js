@@ -15,7 +15,7 @@ dotenv.config()
 const app = express()
 
 app.use(cors({
-  origin: 'http://localhost:5173',  // your frontend's URL
+  origin: 'https://client-puce-tau-47.vercel.app',  // your frontend's URL
   credentials: true, 
   exposedHeaders : ["set-cookie"]
 }))

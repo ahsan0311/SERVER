@@ -19,7 +19,7 @@ const app = express()
 
 app.use(
   cors({
-    origin: 'https://server-beta-ebon.vercel.app/',
+    origin: 'https://client-puce-tau-47.vercel.app',
     credentials: true,
     exposedHeaders: ["set-cookie"],
   })
